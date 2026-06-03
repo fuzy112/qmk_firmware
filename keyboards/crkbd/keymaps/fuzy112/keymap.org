@@ -1,0 +1,719 @@
+# -*- mode: org; coding: utf-8-unix; -*-
+
+#+TITLE:    Keymap
+#+AUTHOR:   Zhengyi Fu  <i@fuzy.me>
+#+DATE:     Tue May 26 12:35:41 2026
+#+FILETAGS: :keyboard:keymap:corne:crbkd:
+#+STARTUP:  indent
+
+* Introduction
+
+This is a keymap for the Corne (CRKBD) keyboard using the Dvorak
+layout.  It is designed to minimize finger movement and maximize
+comfort during extended typing sessions.
+
+The keymap is inspired by the Miryoku keymap, but it utilizes all keys
+on the Corne 46-key layout.  Miryoku focuses on a 34-key philosophy
+with home-row modifiers and layers; this keymap extends that approach
+to take advantage of the additional keys available on the Corne
+keyboard.
+
+Features included in this keymap:
+
+- Home-row modifiers on the base layer
+- Multiple layers for different functions (navigation, numbers,
+  symbols, functions, media, mouse)
+- Tap dance for quick access to boot, reset, lock, and caps functions
+  (requiring double-tap to prevent accidental triggers)
+- Caps word for typing SCREAMING_SNAKE_CASE without holding shift
+- Auto shift for automatic shifting of keys when held longer
+- Flow tap for improved tap-hold disambiguation on rolling keys
+- Speculative hold for immediate modifier activation on home-row keys
+- Secure lock to prevent unexpected keyboard usage
+- RGB matrix with typing heatmap visualization
+
+* Includes
+
+The following headers are required for the keymap.  They must appear
+first in the tangled C file to ensure all macros and types are
+defined before use.
+
+#+begin_src c :tangle yes
+  #include QMK_KEYBOARD_H
+#+end_src
+
+* Definitions
+
+This section generates C code definitions from the tables defined in
+later sections.  It is placed here so that the generated enums and
+macros are defined before any code that references them.
+
+The layer enum is generated from the layers table, the tap dance enum
+from the tap-dances table, and clipboard key macros from the
+clipboard-keys table.
+
+#+begin_src c :tangle yes :noweb yes
+  <<table-to-enum(table=layers, prefix="L_")>>
+#+end_src
+
+#+begin_src c :tangle yes :noweb yes
+  <<table-to-enum(tap-dances()[,0])>>
+#+end_src
+
+#+begin_src c :tangle yes :noweb yes
+  <<table-to-define(table=clipboard-keys()[,0:1])>>
+#+end_src
+
+
+* Keymap layers
+
+The keymap consists of several layers, each designed for a specific
+purpose.  The base layer uses Dvorak layout with home-row modifiers,
+while additional layers provide access to numbers, symbols,
+navigation keys, function keys, media controls, and mouse buttons.
+
+All layers except the base and lock layers are accessed through
+layer-tap keys on the base layer or through momentary layer switches.
+The lock layer can only be activated by the secure lock feature.
+
+#+name: layers
+| Layers |
+|--------|
+| BASE   |
+| NUM    |
+| SYM    |
+| NAV    |
+| FUN    |
+| BUTTON |
+| MEDIA  |
+| MOUSE  |
+| LOCK   |
+
+** The base layer
+
+The base layer uses the Dvorak layout for alphabetic keys.  Home-row
+modifier keys are placed on both halves: the left hand uses left-hand
+modifiers (LGUI, LALT, LCTL, LSFT) while the right hand uses
+right-hand modifiers (RSFT, RCTL, LALT, RGUI), allowing access to
+Control, Alt, Shift, and GUI without leaving the home row.
+
+The thumb keys provide access to Space, Enter, Backspace, Delete,
+Tab, and layer switches.
+
+#+name: home-row-mod-keys
+| Identifier | Definition            |
+|------------+-----------------------|
+| GUI_A      | LGUI_T(KC_A)          |
+| ALT_O      | LALT_T(KC_O)          |
+| CTL_E      | LCTL_T(KC_E)          |
+| SFT_U      | LSFT_T(KC_U)          |
+| RALT_Q     | RALT_T(KC_Q)          |
+| GUI_S      | LGUI_T(KC_S)          |
+| ALT_N      | LALT_T(KC_N)          |
+| CTL_T_     | LCTL_T(KC_T)          |
+| SFT_H      | LSFT_T(KC_H)          |
+| RALT_V     | RALT_T(KC_V)          |
+| BUT_SCLN   | LT(L_BUTTON, KC_SCLN) |
+| BUT_Z      | LT(L_BUTTON, KC_Z)    |
+| MED_ESC    | LT(L_MEDIA, KC_ESC)   |
+| NAV_SPC    | LT(L_NAV, KC_SPC)     |
+| MOU_TAB    | LT(L_MOUSE, KC_TAB)   |
+| SYM_ENT    | LT(L_SYM, KC_ENT)     |
+| NUM_BSPC   | LT(L_NUM, KC_BSPC)    |
+| FUN_DEL    | LT(L_FUN, KC_DEL)     |
+
+#+begin_src c :tangle yes :noweb yes
+  <<table-to-define(table=home-row-mod-keys)>>
+#+end_src
+
+#+name: L_BASE
+| KC_TAB  | KC_QUOT  | KC_COMM | KC_DOT  | KC_P    | KC_Y    | A(KC_S) |   | C(KC_C) | KC_F    | KC_G     | KC_C    | KC_R   | KC_L  | KC_SLSH |
+| KC_LCTL | GUI_A    | ALT_O   | CTL_E   | SFT_U   | KC_I    | A(KC_X) |   | C(KC_X) | KC_D    | SFT_H    | CTL_T_  | ALT_N  | GUI_S | KC_MINS |
+| OS_LSFT | BUT_SCLN | RALT_Q  | KC_J    | KC_K    | KC_X    |         |   |         | KC_B    | KC_M     | KC_W    | RALT_V | BUT_Z | A(KC_G) |
+|         |          |         | MED_ESC | NAV_SPC | MOU_TAB |         |   |         | SYM_ENT | NUM_BSPC | FUN_DEL |        |       |         |
+
+** Navigation layer
+
+The navigation layer provides arrow keys, home/end, page up/down, and
+clipboard operations.  It is accessed by holding the left primary
+thumb key.
+
+#+name: L_NAV
+| _______ | TD(U_BOOT) | TD(U_RESET) | TD(U_LKSCRN) | TD(U_LOCKKB) | QK_LLCK | _______ |   | _______ | U_REDO     | U_PASTE | U_COPY  | U_CUT   | U_UNDO  | _______ |
+| _______ | KC_LGUI    | KC_LALT     | KC_LCTL      | KC_LSFT      | _______ | _______ |   | _______ | TD(U_CAPS) | KC_LEFT | KC_UP   | KC_DOWN | KC_RGHT | _______ |
+| _______ | _______    | _______     | _______      | _______      | _______ |         |   |         | KC_INS     | KC_HOME | KC_PGUP | KC_PGDN | KC_END  | _______ |
+|         |            |             | _______      | _______      | _______ |         |   |         | KC_ENT     | KC_BSPC | KC_DEL  |         |         |         |
+
+** Mouse layer
+
+The mouse layer provides mouse movement, scrolling, and button
+controls.  It is accessed by holding the left secondary thumb key.
+
+#+name: L_MOUSE
+| _______ | TD(U_BOOT) | TD(U_RESET) | TD(U_LKSCRN) | TD(U_LOCKKB) | QK_LLCK | _______ |   | _______ | U_REDO  | U_PASTE | U_COPY  | U_CUT   | U_UNDO  | _______ |
+| _______ | KC_LGUI    | KC_LALT     | KC_LCTL      | KC_LSFT      | _______ | _______ |   | _______ | XXXXXXX | MS_LEFT | MS_UP | MS_DOWN   | MS_RGHT | _______ |
+| _______ | _______    | _______     | _______      | _______      | _______ |         |   |         | XXXXXXX | MS_WHLL | MS_WHLU | MS_WHLD | MS_WHLR | _______ |
+|         |            |             | _______      | _______      | _______ |         |   |         | MS_BTN2 | MS_BTN1 | MS_BTN3 |         |         |         |
+
+** Button layer
+
+The button layer provides mouse buttons and clipboard operations on
+both hands.  It is primarily used for chording with other layers.
+
+#+name: L_BUTTON
+| _______ | U_UNDO  | U_CUT   | U_COPY  | U_PASTE | U_REDO  | _______ |   | _______ | U_REDO  | U_PASTE | U_COPY  | U_CUT   | U_UNDO  | _______ |
+| _______ | KC_LGUI | KC_LALT | KC_LCTL | KC_LSFT | _______ | _______ |   | _______ | XXXXXXX | KC_LSFT | KC_LCTL | KC_LALT | KC_LGUI | _______ |
+| _______ | U_UNDO  | U_CUT   | U_COPY  | U_PASTE | U_REDO  |         |   |         | U_REDO  | U_PASTE | U_COPY  | U_CUT   | U_UNDO  | _______ |
+|         |         |         | MS_BTN3 | MS_BTN1 | MS_BTN2 |         |   |         | MS_BTN2 | MS_BTN1 | MS_BTN3 |         |         |         |
+
+** Media layer
+
+The media layer provides media controls (play, pause, volume,
+previous/next track) and RGB matrix controls.  It is accessed by
+holding the left tertiary thumb key.
+
+The right hand provides RGB matrix controls on the top row and media
+controls below.  Shifted versions of the RGB keys decrease the
+respective values (see the "Handle shifted keys" section).
+
+#+name: L_MEDIA
+| _______ | TD(U_BOOT) | TD(U_RESET) | TD(U_LKSCRN) | TD(U_LOCKKB) | QK_LLCK | _______ |   | _______ | RM_TOGG | RM_NEXT | RM_HUEU | RM_SATU | RM_VALU | _______ |
+| _______ | KC_LGUI    | KC_LALT     | KC_LCTL      | KC_LSFT      | _______ | _______ |   | _______ | XXXXXXX | KC_MPRV | KC_VOLD | KC_VOLU | KC_MNXT | _______ |
+| _______ | _______    | _______     | _______      | _______      | _______ |         |   |         | OU_AUTO | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | _______ |
+|         |            |             | _______      | _______      | _______ |         |   |         | KC_MSTP | KC_MPLY | KC_MUTE |         |         |         |
+
+** Number layer
+
+The number layer provides a numpad layout on the left hand with
+additional bracket and symbol keys.  It is accessed by holding the
+right primary thumb key.
+
+The number keys are arranged in a standard numpad layout (7-8-9 on
+top, 4-5-6 in middle, 1-2-3 on bottom, with 0 below).  Brackets,
+semicolon, equals, grave, backslash, dot, and minus provide quick
+access to commonly used programming symbols.
+
+#+name: L_NUM
+| _______ | KC_LBRC | KC_7 | KC_8   | KC_9 | KC_RBRC | _______ |   | _______ | QK_LLCK | TD(U_LOCKKB) | TD(U_LKSCRN) | TD(U_RESET) | TD(U_BOOT) | _______ |
+| _______ | KC_SCLN | KC_4 | KC_5   | KC_6 | KC_EQL  | _______ |   | _______ | _______ | KC_LSFT      | KC_LCTL      | KC_LALT     | KC_LGUI    | _______ |
+| _______ | KC_GRV  | KC_1 | KC_2   | KC_3 | KC_BSLS |         |   |         | _______ | _______      | _______      | _______     | _______    | _______ |
+|         |         |      | KC_DOT | KC_0 | KC_MINS |         |   |         | _______ | _______      | _______      |             |            |         |
+
+** Symbol layer
+
+The symbol layer provides access to shifted versions of the number
+layer keys and additional symbols.  It is accessed by holding the
+right secondary thumb key.
+
+This layer provides symbols commonly used in programming: ampersand,
+asterisk, parentheses, dollar, percent, caret, plus, tilde,
+exclamation, at, hash, pipe, and underscore.
+
+#+name: L_SYM
+| _______ | S(KC_LBRC) | KC_AMPR | KC_ASTR | KC_LPRN | S(KC_RBRC) | _______ |   | _______ | QK_LLCK | TD(U_LOCKKB) | TD(U_LKSCRN) | TD(U_RESET) | TD(U_BOOT) | _______ |
+| _______ | S(KC_SCLN) | KC_DLR  | KC_PERC | KC_CIRC | KC_PLUS    | _______ |   | _______ | _______ | KC_LSFT      | KC_LCTL      | KC_LALT     | KC_LGUI    | _______ |
+| _______ | KC_TILD    | KC_EXLM | KC_AT   | KC_HASH | KC_PIPE    |         |   |         | _______ | _______      | _______      | _______     | _______    | _______ |
+|         |            |         | KC_LPRN | KC_RPRN | KC_UNDS    |         |   |         | _______ | _______      | _______      |             |            |         |
+
+** Function layer
+
+The function layer provides function keys (F1-F12) and additional
+system keys.  It is accessed by holding the right tertiary thumb key.
+
+The function keys are arranged with F1-F4 on the bottom row, F5-F8 in
+the middle, and F9-F12 on top.  Print screen, scroll lock, and pause
+are also available.
+
+#+name: L_FUN
+| _______ | KC_F12 | KC_F7 | KC_F8   | KC_F9  | KC_PSCR  | _______ |   | _______ | QK_LLCK | TD(U_LOCKKB) | TD(U_LKSCRN) | TD(U_RESET) | TD(U_BOOT) | _______ |
+| _______ | KC_F11 | KC_F4 | KC_F5   | KC_F6  | KC_SCRL  | _______ |   | _______ | _______ | KC_LSFT      | KC_LCTL      | KC_LALT     | KC_LGUI    | _______ |
+| _______ | KC_F10 | KC_F1 | KC_F2   | KC_F3  | KC_PAUSE |         |   |         | _______ | _______      | _______      | _______     | _______    | _______ |
+|         |        |       | KC_MENU | KC_SPC | KC_TAB   |         |   |         | _______ | _______      | _______      |             |            |         |
+
+** Lock layer
+
+The lock layer is activated when the keyboard is locked.  All keys are disabled except the unlock key.
+
+#+name: L_LOCK
+| TD(U_LOCKKB) | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX |   | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX |
+| XXXXXXX      | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX |   | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX |
+| XXXXXXX      | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX |         |   |         | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX | XXXXXXX |
+|              |         |         | XXXXXXX | XXXXXXX | XXXXXXX |         |   |         | XXXXXXX | XXXXXXX | XXXXXXX |         |         |         |
+
+** Converting the table to C code
+
+This section contains the code that converts the layer tables above
+into C code for the QMK firmware.  It is used for tangling and
+normally hidden from view.
+
+#+name: format_keymap
+#+begin_src elisp :var map=L_BASE :var name="L_BASE" :results value :wrap src c
+  (concat "[" name "] = LAYOUT_split_3x6_3_ex2(\n"
+  	(with-temp-buffer
+  	  (indent-tabs-mode -1)
+  	  (cl-loop for row in map
+  		   do
+  		   (insert "|")
+  		   (cl-loop for key in row
+  			    do (insert (format "%s| " key)))
+  		   (newline))
+  	  (org-table-align)
+  	  ;;(replace-regexp-in-region "^|" "  " (point-min) (point-max))
+  	  (replace-regexp-in-region "\\([a-zA-Z0-9_)]+ *\\)|" "\\1," (point-min) (point-max))
+  	  (replace-regexp-in-region "|" " " (point-min) (point-max))
+  	  (replace-regexp-in-region ",\\s *\\'" "" (point-min) (point-max))
+  	  (buffer-string))
+          "\n)")
+#+end_src
+
+#+RESULTS: format_keymap
+#+begin_src c
+[L_BASE] = LAYOUT_split_3x6_3_ex2(
+  KC_TAB  , KC_QUOT  , KC_COMM , KC_DOT  , KC_P    , KC_Y    , A(KC_S) ,     C(KC_C) , KC_F    , KC_G     , KC_C    , KC_R   , KC_L  , KC_SLSH ,
+  KC_LCTL , GUI_A    , ALT_O   , CTL_E   , SFT_U   , KC_I    , A(KC_X) ,     C(KC_X) , KC_D    , SFT_H    , CTL_T_  , ALT_N  , GUI_S , KC_MINS ,
+  OS_LSFT , BUT_SCLN , RALT_Q  , KC_J    , KC_K    , KC_X    ,                         KC_B    , KC_M     , KC_W    , RALT_V , BUT_Z , A(KC_G) ,
+                                 MED_ESC , NAV_SPC , MOU_TAB ,                         SYM_ENT , NUM_BSPC , FUN_DEL
+)
+#+end_src
+
+
+#+begin_src c :tangle yes :noweb yes
+  const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+    <<format_keymap(map=L_BASE, name="L_BASE")>>,
+    <<format_keymap(map=L_NAV, name="L_NAV")>>,
+    <<format_keymap(map=L_NUM, name="L_NUM")>>,
+    <<format_keymap(map=L_SYM, name="L_SYM")>>,
+    <<format_keymap(map=L_FUN, name="L_FUN")>>,
+    <<format_keymap(map=L_MEDIA, name="L_MEDIA")>>,
+    <<format_keymap(map=L_MOUSE, name="L_MOUSE")>>,
+    <<format_keymap(map=L_BUTTON, name="L_BUTTON")>>,
+    <<format_keymap(map=L_LOCK, name="L_LOCK")>>,
+  };
+#+end_src
+
+* Special handling
+
+This section describes custom behavior for specific keys and features
+that modify the standard key handling.
+
+** Dvorak alphabets and symbols
+
+These tables list Dvorak-specific keycodes for use in the noweb
+references in other sections.
+
+#+name: dvorak-alphabets
+| Keys |
+|------|
+| KC_A |
+| KC_B |
+| KC_C |
+| KC_D |
+| KC_E |
+| KC_F |
+| KC_G |
+| KC_H |
+| KC_I |
+| KC_J |
+| KC_K |
+| KC_L |
+| KC_M |
+| KC_N |
+| KC_O |
+| KC_P |
+| KC_Q |
+| KC_R |
+| KC_S |
+| KC_T |
+| KC_U |
+| KC_V |
+| KC_W |
+| KC_X |
+| KC_Y |
+| KC_Z |
+
+#+name: dvorak-symbols
+| KC_MINS |
+| KC_EQL  |
+| KC_SCLN |
+| KC_QUOT |
+| KC_COMM |
+| KC_DOT  |
+| KC_PLUS |
+| KC_LBRC |
+| KC_RBRC |
+| KC_SLSH |
+| KC_BSLS |
+| KC_GRV  |
+
+** Handle shifted keys
+
+The RGB matrix keys on the media layer have alternate actions when
+combined with Shift.  This allows increasing and decreasing values
+without requiring a separate layer.
+
+For example, holding Shift and pressing RM_HUEU will decrease the hue
+instead of increasing it.
+
+#+name: shifted-media-keys
+| Modifiers      | Key     | Action                    |
+|----------------+---------+---------------------------|
+| MOD_MASK_SHIFT | RM_HUEU | rgb_matrix_decrease_hue() |
+| MOD_MASK_SHIFT | RM_SATU | rgb_matrix_decrease_sat() |
+| MOD_MASK_SHIFT | RM_VALU | rgb_matrix_decrease_val() |
+| MOD_MASK_SHIFT | RM_TOGG | rgb_matrix_disable()      |
+
+
+#+begin_src c :tangle yes :noweb yes
+  bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+  #define X(mod, key, action)                     \
+      case key:                                   \
+        if (get_mods() & mod) {                   \
+          if (record->event.pressed) {            \
+            action;                               \
+          }                                       \
+          return false;                           \
+        }                                         \
+        break;
+      <<table-to-xlist(table=shifted-media-keys)>>
+  #undef X
+        }
+    return true;
+  }
+#+end_src
+
+** Caps word
+
+Caps word is a feature that enables typing in ALL_CAPS without holding
+down the Shift key.  When activated, alphabetic characters are
+automatically shifted.  The feature automatically deactivates when a
+non-continuation key is pressed.
+
+#+begin_src c :tangle yes :noweb yes
+  bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+  #define X(x) case x:
+      <<table-to-xlist(table=dvorak-alphabets)>>
+  #undef X
+    case KC_MINS:
+      add_weak_mods(MOD_BIT(KC_LSFT));
+      return true;
+
+    case KC_1 ... KC_9:
+    case KC_UNDS:
+    case KC_BSPC:
+    case KC_DEL:
+      return true;
+
+    default:
+      return false;
+    }
+  }
+#+end_src
+
+** Tap dance
+
+Tap dance allows a single key to have different actions based on how
+many times it is tapped.  The following tap dances are defined:
+
+- U_BOOT :: Double-tap to jump to bootloader
+- U_RESET :: Double-tap to reset the keyboard
+- U_LKSCRN :: Double-tap to lock the screen
+- U_LOCKKB :: Double-tap to lock the keyboard (secure lock)
+- U_CAPS :: Single-tap toggles caps word, double-tap toggles Caps Lock
+
+#+name: tap-dances
+| Identifier | Action                                    |
+|------------+-------------------------------------------|
+| U_BOOT     | ACTION_TAP_DANCE_FN(dance_boot)           |
+| U_RESET    | ACTION_TAP_DANCE_FN(dance_reset)          |
+| U_LKSCRN   | ACTION_TAP_DANCE_DOUBLE(KC_NO, LAG(KC_L)) |
+| U_LOCKKB   | ACTION_TAP_DANCE_FN(dance_lock)           |
+| U_CAPS     | ACTION_TAP_DANCE_FN(dance_caps)           |
+
+
+#+begin_src c :tangle yes
+  static void dance_boot(tap_dance_state_t *state, void *user_data) {
+    if (state->count >= 2) {
+      bootloader_jump();
+    }
+  }
+
+  static void dance_reset(tap_dance_state_t *state, void *user_data) {
+    if (state->count >= 2) {
+      mcu_reset();
+    }
+  }
+
+  static void dance_lock(tap_dance_state_t *state, void *user_data) {
+    if (state->count == 2) {
+      layer_on(L_LOCK);
+      rgb_matrix_disable_noeeprom();
+    } if (state->count == 3) {
+      rgb_matrix_enable_noeeprom();
+      layer_off(L_LOCK);
+    }
+  }
+
+  static void dance_caps(tap_dance_state_t *state, void *user_data) {
+    if (state->count == 1) {
+      caps_word_toggle();
+    } else {
+      tap_code(KC_CAPS);
+    }
+  }
+#+end_src
+
+#+name: tap-dance-actions
+#+begin_src elisp :var table=tap-dances :results value
+  (cl-loop for (key action) in table
+  	 concat (format "[%s] = %s,\n" key action))
+#+end_src
+
+#+results: tap-dance-actions
+: [U_BOOT] = ACTION_TAP_DANCE_FN(dance_boot),
+: [U_RESET] = ACTION_TAP_DANCE_FN(dance_reset),
+: [U_LKSCRN] = ACTION_TAP_DANCE_DOUBLE(KC_NO, LAG(KC_L)),
+: [U_LOCKKB] = ACTION_TAP_DANCE_FN(dance_lock),
+: [U_CAPS] = ACTION_TAP_DANCE_FN(dance_caps),
+
+#+begin_src c :tangle yes :noweb yes
+  tap_dance_action_t tap_dance_actions[] = {
+    <<tap-dance-actions()>>
+  };
+#+end_src
+
+** Clipboard functions
+
+Clipboard operations are defined as macros to ensure consistent
+behavior across different operating systems.
+
+=KC_COPY=, =KC_CUT= and =KC_PASTE= are not used because they don't
+have default bindings in Emacs.
+
+#+name: clipboard-keys
+| Identifier | Keycode   | Alternatives |
+|------------+-----------+--------------|
+| U_COPY     | C(KC_INS) | KC_COPY      |
+| U_CUT      | S(KC_DEL) | KC_CUT       |
+| U_PASTE    | S(KC_INS) | KC_PASTE     |
+| U_REDO     | KC_AGAIN  |              |
+| U_UNDO     | KC_UNDO   |              |
+
+** Auto shift
+
+Auto shift automatically sends the shifted version of a key when it
+is held longer than ~AUTO_SHIFT_TIMEOUT~.  The shifted versions of
+Dvorak symbol keys, digits, Tab, and the semicolon layer-tap key
+are enabled.
+
+RETRO_SHIFT is also enabled.  For tap-hold keys that are in the
+auto-shift list (such as ~LT(L_BUTTON, KC_SCLN)~), holding and
+releasing the key without pressing another key will produce the
+shifted version of the tap keycode, as long as the hold time is
+within the ~RETRO_SHIFT~ window.  Holds longer than that trigger
+the normal hold action instead.
+
+#+begin_src c :tangle yes :noweb yes
+  bool get_auto_shifted_key(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+    case KC_1 ... KC_0:
+    case KC_TAB:
+  #define X(x)  case x:
+      <<table-to-xlist(table=dvorak-symbols)>>
+  #undef X
+    case LT(L_BUTTON, KC_SCLN):
+      return true;
+    default:
+      return false;
+    }
+  }
+#+end_src
+
+** Flow tap
+
+Flow tap allows Space and Dvorak symbol keys to be used for tap-based
+hold/tap disambiguation.  It is disabled when modifiers or Alt are
+held to avoid interfering with hotkeys.
+
+#+begin_src c :tangle yes :noweb yes
+  bool is_flow_tap_key(uint16_t keycode) {
+    if ((get_mods() & (MOD_MASK_CG | MOD_BIT_LALT)) != 0) {
+      return false;
+    }
+    switch (get_tap_keycode(keycode)) {
+    case KC_SPC:
+  #define X(x)  case x:
+      <<table-to-xlist(table=dvorak-alphabets)>>
+      <<table-to-xlist(table=dvorak-symbols)>>
+  #undef X
+      return true;
+    }
+    return false;
+  }
+#+end_src
+
+** Chordal hold (Disabled)
+
+Chordal hold is disabled by default because it prevents single-handed
+shortcuts.  When enabled, if a mod-tap key is pressed and then another
+key on the same hand is pressed within the tapping term, the mod-tap
+key is settled as tapped instead of held, which breaks shortcuts that
+use modifiers and keys on the same hand.
+
+If your typing style does not rely on single-handed shortcuts, you can
+re-enable it by adding the following to your =config.h=:
+
+#+begin_src c
+  #define CHORDAL_HOLD
+#+end_src
+
+** Speculative hold (Disabled)
+
+Speculative hold is disabled because it causes issues with Chinese
+IMEs.  When a home-row modifier key is pressed, speculative hold
+immediately sends the modifier (e.g., Shift), which Chinese IMEs
+interpret as an English/Chinese mode switch.  This results in
+unintended language switching while typing.
+
+If you do not use Chinese IMEs or other input methods that rely on
+modifier keys for mode switching, you can re-enable it by adding the
+following to your =config.h=:
+
+#+begin_src c
+  #define SPECULATIVE_HOLD
+#+end_src
+
+* Rules
+
+These rules enable additional QMK features in the firmware build.
+Each option corresponds to a feature that requires extra code and
+memory.
+
+#+name: rules
+| Option            | Value |
+|-------------------+-------|
+| TAP_DANCE_ENABLE  | yes   |
+| CAPS_WORD_ENABLE  | yes   |
+| AUTO_SHIFT_ENABLE | yes   |
+| LAYER_LOCK_ENABLE | yes   |
+
+#+begin_src makefile :tangle rules.mk :noweb yes
+  <<table-to-var(table=rules)>>
+#+end_src
+
+* Configurations
+
+These configuration options fine-tune the behavior of the enabled
+features.  They are compiled into the firmware via ~config.h~.
+
+#+name: config-options
+| Option                  |                     Value |
+|-------------------------+---------------------------|
+| TAPPING_TERM            |                       200 |
+| QUICK_TAP_TERM          |                         0 |
+| RGB_MATRIX_DEFAULT_MODE | RGB_MATRIX_TYPING_HEATMAP |
+| AUTO_SHIFT_TIMEOUT      |                       150 |
+| AUTO_SHIFT_NO_SETUP     |                           |
+| RETRO_SHIFT             |                       500 |
+
+
+#+begin_src c :tangle config.h :noweb yes
+  <<table-to-define(table=config-options)>>
+#+end_src
+
+* Scripts
+
+This section contains helper scripts used by org-babel to convert
+tables into C code and Makefile variables.  These are internal
+utilities and are not part of the firmware itself.
+
+#+name: table-example
+| Identifier | Value |
+|------------+-------|
+| FOO        |     1 |
+| BAR        |       |
+| BAZ        |     2 |
+
+#+name: table-to-define
+#+begin_src bash :var table=table-example :var prefix="" :results output :wrap src c
+  if [[ "${table@a}" = *"A"* ]]; then
+      for id in "${!table[@]}"; do
+  	echo "#define" "$prefix$id" "${table[$id]}"
+      done
+  else
+      for id in "${table[@]}"; do
+  	echo "#define" "$prefix$id"
+      done
+  fi
+#+end_src
+
+#+results: table-to-define
+#+begin_src c
+#define FOO 1
+#define BAR
+#define BAZ 2
+#+end_src
+
+#+name: table-to-var
+#+begin_src bash :var table=table-example :var prefix="" :results output :wrap src makefile
+  for id in "${!table[@]}"; do
+      echo "$prefix$id" = "${table[$id]}"
+  done
+#+end_src
+
+#+results: table-to-var
+#+begin_src makefile
+FOO = 1
+BAR =
+BAZ = 2
+#+end_src
+
+#+name: table-to-enum
+#+begin_src bash :var table=table-example :var name="" :var prefix="" :results output :wrap src c
+  echo enum $name '{'
+  if [[ "${table@a}" = *"A"* ]]; then
+      for id in "${!table[@]}"; do
+    	echo "  $prefix$id${table[$id]:+ = ${table[$id]}},"
+      done
+  else
+      for id in "${table[@]}"; do
+  	echo " $prefix$id,"
+      done
+  fi
+  echo '};'
+#+end_src
+
+#+results: table-to-enum
+#+begin_src c
+enum {
+  FOO = 1,
+  BAR,
+  BAZ = 2,
+};
+#+end_src
+
+#+name: table-to-xlist
+#+begin_src elisp :var table=table-example :wrap src c
+  (cl-loop for row in table
+  	 concat (format "X(%s)\n"
+  			(string-join (mapcar (lambda (x) (format "%s" x))
+  					     row)
+  			     ", ")))
+#+end_src
+
+#+results: table-to-xlist
+#+begin_src c
+X(FOO, 1)
+X(BAR, )
+X(BAZ, 2)
+#+end_src
+
+
+* COMMENT Local variables
+
+# Local Variables:
+# org-confirm-babel-evaluate: nil
+# indent-tabs-mode: nil
+# eval: (require 'ob-shell)
+# End:
