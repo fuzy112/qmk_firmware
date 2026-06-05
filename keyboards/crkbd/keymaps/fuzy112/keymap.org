@@ -488,17 +488,19 @@ many times it is tapped.  The following tap dances are defined:
 Clipboard operations are defined as macros to ensure consistent
 behavior across different operating systems.
 
-=KC_COPY=, =KC_CUT= and =KC_PASTE= are not used because they don't
-have default bindings in Emacs.
+Note that Emacs has no default bindings for =KC_COPY=, =KC_CUT=, and
+=KC_PASTE= (=<Copy>=, =<Cut>=, and =<Paste>=).  However, it does have
+bindings for =C-<insertchar>=, =S-<insertchar>=, and
+=S-<delete>=​—these shortcuts also work in xterm.
 
 #+name: clipboard-keys
-| Identifier | Keycode   | Alternatives |
-|------------+-----------+--------------|
-| U_COPY     | C(KC_INS) | KC_COPY      |
-| U_CUT      | S(KC_DEL) | KC_CUT       |
-| U_PASTE    | S(KC_INS) | KC_PASTE     |
-| U_REDO     | KC_AGAIN  |              |
-| U_UNDO     | KC_UNDO   |              |
+| Identifier | Keycode  | Alternatives |
+|------------+----------+--------------|
+| U_COPY     | KC_COPY  | C(KC_INS)    |
+| U_CUT      | KC_CUT   | S(KC_DEL)    |
+| U_PASTE    | KC_PASTE | S(KC_INS)    |
+| U_REDO     | KC_AGAIN |              |
+| U_UNDO     | KC_UNDO  |              |
 
 ** Auto shift
 

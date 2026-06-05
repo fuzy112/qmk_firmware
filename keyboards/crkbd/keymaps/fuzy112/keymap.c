@@ -22,11 +22,11 @@ enum {
 };
 
 
-#define U_PASTE S(KC_INS)
+#define U_PASTE KC_PASTE
 #define U_REDO KC_AGAIN
 #define U_UNDO KC_UNDO
-#define U_COPY C(KC_INS)
-#define U_CUT S(KC_DEL)
+#define U_COPY KC_COPY
+#define U_CUT KC_CUT
 
 
 #define BUT_SCLN LT(L_BUTTON, KC_SCLN)
