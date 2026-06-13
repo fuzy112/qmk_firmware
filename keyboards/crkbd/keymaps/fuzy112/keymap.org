@@ -127,9 +127,9 @@ Tab, and layer switches.
 #+end_src
 
 #+name: L_BASE
-| KC_TAB  | KC_QUOT  | KC_COMM | KC_DOT  | KC_P    | KC_Y    | A(KC_S) |   | C(KC_C) | KC_F    | KC_G     | KC_C    | KC_R   | KC_L  | KC_SLSH |
-| KC_LCTL | GUI_A    | ALT_O   | CTL_E   | SFT_U   | KC_I    | A(KC_X) |   | C(KC_X) | KC_D    | SFT_H    | CTL_T_  | ALT_N  | GUI_S | KC_MINS |
-| OS_LSFT | BUT_SCLN | RALT_Q  | KC_J    | KC_K    | KC_X    |         |   |         | KC_B    | KC_M     | KC_W    | RALT_V | BUT_Z | A(KC_G) |
+| KC_TAB  | KC_QUOT  | KC_COMM | KC_DOT  | KC_P    | KC_Y    | KC_BSLS |   | KC_EQL  | KC_F    | KC_G     | KC_C    | KC_R   | KC_L  | KC_SLSH |
+| KC_LCTL | GUI_A    | ALT_O   | CTL_E   | SFT_U   | KC_I    | CW_TOGG |   | KC_LNG1 | KC_D    | SFT_H    | CTL_T_  | ALT_N  | GUI_S | KC_MINS |
+| OS_LSFT | BUT_SCLN | RALT_Q  | KC_J    | KC_K    | KC_X    |         |   |         | KC_B    | KC_M     | KC_W    | RALT_V | BUT_Z | QK_GESC |
 |         |          |         | MED_ESC | NAV_SPC | MOU_TAB |         |   |         | SYM_ENT | NUM_BSPC | FUN_DEL |        |       |         |
 
 ** Navigation layer
