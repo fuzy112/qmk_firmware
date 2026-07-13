@@ -58,7 +58,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [L_NAV] = LAYOUT_split_3x6_3_ex2(
     _______ , TD(U_BOOT) , TD(U_RESET) , TD(U_LKSCRN) , TD(U_LOCKKB) , QK_LLCK , _______ ,     _______ , U_REDO     , U_PASTE , U_COPY  , U_CUT   , U_UNDO  , _______ ,
-    _______ , KC_LGUI    , KC_LALT     , KC_LCTL      , KC_LSFT      , _______ , _______ ,     _______ , TD(U_CAPS) , KC_LEFT , KC_UP   , KC_DOWN , KC_RGHT , _______ ,
+    _______ , KC_LGUI    , KC_LALT     , KC_LCTL      , KC_LSFT      , _______ , _______ ,     _______ , TD(U_CAPS) , KC_LEFT , KC_DOWN , KC_UP   , KC_RGHT , _______ ,
     _______ , _______    , _______     , _______      , _______      , _______ ,                         KC_INS     , KC_HOME , KC_PGUP , KC_PGDN , KC_END  , _______ ,
                                          _______      , _______      , _______ ,                         KC_ENT     , KC_BSPC , KC_DEL  
   ),
@@ -88,7 +88,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   [L_MOUSE] = LAYOUT_split_3x6_3_ex2(
     _______ , TD(U_BOOT) , TD(U_RESET) , TD(U_LKSCRN) , TD(U_LOCKKB) , QK_LLCK , _______ ,     _______ , U_REDO  , U_PASTE , U_COPY  , U_CUT   , U_UNDO  , _______ ,
-    _______ , KC_LGUI    , KC_LALT     , KC_LCTL      , KC_LSFT      , _______ , _______ ,     _______ , XXXXXXX , MS_LEFT , MS_UP   , MS_DOWN , MS_RGHT , _______ ,
+    _______ , KC_LGUI    , KC_LALT     , KC_LCTL      , KC_LSFT      , _______ , _______ ,     _______ , XXXXXXX , MS_LEFT , MS_DOWN , MS_UP   , MS_RGHT , _______ ,
     _______ , _______    , _______     , _______      , _______      , _______ ,                         XXXXXXX , MS_WHLL , MS_WHLU , MS_WHLD , MS_WHLR , _______ ,
                                          _______      , _______      , _______ ,                         MS_BTN2 , MS_BTN1 , MS_BTN3 
   ),
